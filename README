@@ -1,1 +1,34 @@
-This is a README.
+Purpose
+-------
+
+	This library implements homomorphic integer comparison and it uses
+the homomorphic ntru library which can be downloaded from here 
+http://ecewp.ece.wpi.edu/wordpress/vernam/projects/source-codes/homomorphic-aes-evaluation-using-ltv/.
+Homomorphic integer comparison can be used for the selection of the maximum from a vector, to sort
+a vector or for Private Information Retrieval.
+
+
+Setup
+-----
+	Library NTL 6.0
+	Library gmp 5.1.3. 
+	Doroz, Berk, Sunar Library which can be downloaded from here
+http://ecewp.ece.wpi.edu/wordpress/vernam/projects/source-codes/homomorphic-aes-evaluation-using-ltv/
+
+	After downloading the Doroz et.al library rename the folder of the library 
+Hom_NTRU_library and copy it in the folder hom_int. 
+
+
+
+References
+----------
+	The library uses the scenario described in 
+"On-the-Fly Multiparty Computation on the Cloud via Multikey Fully Homomorphic Encryption" by Lopez-Alt et.al
+https://eprint.iacr.org/2013/094 to compare homomorphically encrypted integers and select the maximum.
+	For implementation the library uses the ideas and source code from 
+"Comparison-based Applications for Fully Homomorphic Encrypted Data" by Togan et.al.
+
+
+
+
+

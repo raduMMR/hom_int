@@ -3,11 +3,11 @@
 
 #include <iostream>
 #include <vector>
-#include "def.h"
-#include "ntru.h"
-#include "crt.h"
-#include "fft_mult.h"
-#include "general.h"
+#include "Hom_NTRU_library/def.h"
+#include "Hom_NTRU_library/ntru.h"
+#include "Hom_NTRU_library/crt.h"
+#include "Hom_NTRU_library/fft_mult.h"
+#include "Hom_NTRU_library/general.h"
 #include "CtxtBit.h"
 
 using namespace std;

@@ -1,13 +1,14 @@
 Drepturi de autor
 -----------------
-	Aceasta biblioteca care implementeaza comparatia homomorfica a intregilor
-si gasirea maximului dintr-un vector de numere intregi criptate
+	Aceasta biblioteca implementeaza comparatia homomorfica a intregilor
+si gasirea maximului dintr-un vector de numere intregi criptate. Biblioteca
 foloseste structura si ideile bibliotecii de comparatii homomorfice si selectie a maximului
-asa cum este ea descrisa aici
+din urmatorul articol
 http://www.acad.ro/sectii2002/proceedings/doc2015-3s/08-Togan.pdf.
 
 	Pentru partea de implementare a schemei de criptare homomorfice bazate pe NTRU biblioteca de
-fata foloseste biblioteca care asa cum este descrisa aici https://eprint.iacr.org/2014/039.pdf
+fata foloseste biblioteca pentru ntru homomorfic 
+asa cum este descrisa aici https://eprint.iacr.org/2014/039.pdf
 si poate fi descarcata de aici
 http://ecewp.ece.wpi.edu/wordpress/vernam/projects/source-codes/homomorphic-aes-evaluation-using-ltv/
 
@@ -18,6 +19,8 @@ Dependinte
 	Biblioteca NTL 6.0 (pentru versiunile mai noi nu compileaza
 	pentru ca au fost inlocuite niste functii).
 	Biblioteca gmp 5.1.3. 
+	Biblioteca NTRU homomorfic care poate fi descarcata de aici
+http://ecewp.ece.wpi.edu/wordpress/vernam/projects/source-codes/homomorphic-aes-evaluation-using-ltv/
 
 
 Utilizare:
@@ -41,50 +44,8 @@ Organizare cod
 	pentru biti intrucat am introdus clasa de mai sus
 	
 	- test_comparison.h - cateva functii in care testez biblioteca ntru pentru
-	a afla adancimea maxima multiplicativa, a verifica corectitudinea comparatiilor
-	(inca am bug-uri aici)
+	a afla adancimea maxima multiplicativa si verific corectitudinea comparatiilor
 	
-	
-	
-Probleme intampinate
---------------------
-	Utilizarea bibliotecii nu este atat de intuitiva pe cat am crezut.
-	
-ex. pentru multiplicare m-am asteptat ca dupa fiecare astfel de operatie
-sa elimin un nivel de pe "scara" de moduli. Am testat acest lucru si nu 
-am obtinut decriptarea corecta. In schimb daca pastrez parametrul pe
-care il transmit la efectuarea operatiilor corespunzator nivelului este 0
-pot efectua un numar de 89 de multiplicari fara eroare la decriptare.
-	Totusi, trebuie sa insist aici pentru ca bug-urile pe care le am
-la comparatii ar putea proveni chiar de aici.
-
- // ... cum m-as fi asteptat sa folosesc biblioteca
-	result= ntru_context->MulModZZX(result, c0, level);
-	result = ntru_context->Relin(result, level);
-	ntru_context->ModSwitch(result, level);
-	
-	level++;
-	
-	result= ntru_context->MulModZZX(result, c0, level);
-	result = ntru_context->Relin(result, level);
-	ntru_context->ModSwitch(result, level);
-	
-	level++;
-	
-// ...
-
-// ... cum "functioneaza" 
-
-	result= ntru_context->MulModZZX(result, c0, 0);
-	result = ntru_context->Relin(result, 0);
-	ntru_context->ModSwitch(result, 0);
-	
-	result= ntru_context->MulModZZX(result, c0, 0);
-	result = ntru_context->Relin(result, 0);
-	ntru_context->ModSwitch(result, 0);
-
-	ntru_context->Decrypt(result, 1); 
-// ...
 
 
 
