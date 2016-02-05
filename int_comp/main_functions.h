@@ -8,6 +8,31 @@ using namespace std;
 
 #include <assert.h>
 
+
+void test_ntru_multikey()
+{
+	ZZ q 	= to_ZZ("2");
+	ZZ B 	= to_ZZ("1");
+	GlobalParam gp;
+	Set(gp, q, B, Modulus_M);
+
+	ntru *n = new ntru(gp.q, gp.B, gp.N_PolyDegree, gp.M_CycDegree);
+	
+	n->IOReadModulus();
+	n->IOReadModulusExt();
+
+	n->ModulusFindRing(Num_Primes, Max_Prime, Dif_Prime, n->ReturnPolyMod());
+	n->ComputeKeysRingRelin_FFT(Num_Primes, 1);
+	
+	ZZX m0, m1;
+	m0 = 1;
+	m1 = 1;
+	
+	ZZX a = n->Encrypt(m0, 0);
+	ZZX b = n->Encrypt(m1, 1);
+	
+}
+
 //////////////////////////////KEY GENERATION//////////////////////////////////
 void KeyGenOut(){
 	ZZ q 	= to_ZZ("2");
