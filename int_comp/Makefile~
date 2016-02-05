@@ -1,7 +1,0 @@
-run: build 
-	./main < hNTRU/key.txt
-
-build: 
-	g++ hNTRU/crt.cpp hNTRU/fft_mult.cpp hNTRU/general.cpp hNTRU/ntru.cpp hNTRU/fheaes.cpp CtxtBit.cpp HE_Integer.cpp HE_Utils.cpp main.cpp -o main -lntl
-clean:
-	rm -rf main
