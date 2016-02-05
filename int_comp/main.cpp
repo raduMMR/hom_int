@@ -1,8 +1,7 @@
 #include <unistd.h>
 #include <sys/sysinfo.h>
 
-#include "main_functions.h"
-#include "test_comparison.h"
+#include "test_functions.h"
 
 int main()
 {

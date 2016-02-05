@@ -1,11 +1,11 @@
 #ifndef CTXTBIT_
 #define CTXTBIT_
 
-#include "Hom_NTRU_library/def.h"
-#include "Hom_NTRU_library/ntru.h"
-#include "Hom_NTRU_library/crt.h"
-#include "Hom_NTRU_library/fft_mult.h"
-#include "Hom_NTRU_library/general.h"
+#include "../hNTRU/def.h"
+#include "../hNTRU/ntru.h"
+#include "../hNTRU/crt.h"
+#include "../hNTRU/fft_mult.h"
+#include "../hNTRU/general.h"
 
 /*
 clasa CtxtBit este clona nereusita a clasei CtxtPart din

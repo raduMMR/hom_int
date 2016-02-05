@@ -1,33 +1,11 @@
-#include <time.h>
-#include <stdlib.h>
-#include <vector>
-#include <assert.h>
-#include <time.h>
-#include "../hNTRU/def.h"
-#include "../hNTRU/ntru.h"
-#include "../hNTRU/crt.h"
-#include "../hNTRU/fft_mult.h"
-#include "../hNTRU/general.h"
-#include "HE_Utils.h"
-#include "HE_Integer.h"
+#include "test_functions.h"
 
-using namespace std;
-
-
-
-// CtxtBit *ctxt_of_1;			// ctxt_of_1 = ENC(1)
+// ctxt_of_1 = ENC(1)
+CtxtBit *ctxt_of_1;			
 
 // @TODO: shared pointer !!!
-// ntru*    ntru_context;
+ntru*    ntru_context;
 
-
-
-
-/*
-in aceasta functie sunt testate primitivele ce sunt 
-folosite pentru comparatia intregilor si gasirea maximului
-dintr-un vector de numere intregi criptate
-*/
 void Test_NTRU_Comparison(){
 	
 	ZZ q 	= to_ZZ("2");
