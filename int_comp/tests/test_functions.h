@@ -3,15 +3,44 @@
 #include <vector>
 #include <assert.h>
 #include <time.h>
-#include "hNTRU/def.h"
-#include "hNTRU/ntru.h"
-#include "hNTRU/crt.h"
-#include "hNTRU/fft_mult.h"
-#include "hNTRU/general.h"
-#include "hcomp/HE_Utils.h"
-#include "hcomp/HE_Integer.h"
+#include <unistd.h>
+#include "../hNTRU/def.h"
+#include "../hNTRU/ntru.h"
+#include "../hNTRU/ntru_multikey.h"
+#include "../hNTRU/crt.h"
+#include "../hNTRU/fft_mult.h"
+#include "../hNTRU/general.h"
+#include "../hcomp/HE_Utils.h"
+#include "../hcomp/HE_Integer.h"
+#include "../hNTRU/fheaes.h"
 
 using namespace std;
+
+void ntru_tutorial();
+
+/***************Functiile test ale lui Yarkin ******/
+
+void KeyGenOut();
+
+void FHETry();
+
+void Test();
+
+ZZX CreateMess(int size, int q);
+
+void readTime();
+
+void MemTest();
+
+void TT();
+
+void DisplayRealTime();
+
+void mm(ZZX &out, ZZX &in0, ZZX &in1);
+
+void TimeTest();
+
+
 
 /*
 in aceasta functie sunt testate primitivele ce sunt 

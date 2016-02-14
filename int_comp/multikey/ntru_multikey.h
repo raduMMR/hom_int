@@ -1,5 +1,5 @@
-#ifndef NTRU_H_
-#define NTRU_H_
+#ifndef NTRU_H_MULTIKEY
+#define NTRU_H_MULTIKEY
 
 #include <iostream>
 #include <NTL/RR.h>
@@ -10,29 +10,31 @@
 #include <NTL/ZZ_pX.h>
 #include <NTL/ZZXFactoring.h>
 
-#include "general.h"
-#include "fft_mult.h"
+#include "../hNTRU/general.h"
+#include "../hNTRU/fft_mult.h"
+#include "multikey_structs.h"
 #include <stdlib.h>
 #include <ctime>
 
 using namespace std;
 NTL_CLIENT
 
-struct eval_key{
-	ZZX *key;
-};
-
-class ntru{
+/*
+@brief clasa pentru evaluarea homomorfica ntru multikey
+		genereaza cheile si efectueaza operatiile homomorfice
+		cheile si ciphertext-urile sunt reprezentate ca polinoame ZZX
+		
+		pentru evaluarea multikey 
+		-------------------------
+		1. clasa NtruMultikey retine un vector de pointeri la oate instantele care vor fi create 
+		2. metoda compute calculeaza functia homomorfica multikey pe baza indecsilor 
+		   corespunzatori partilor si a descrierii polinomului de evaluat
+		   
+*/
+class NtruMultikey{
 public:
-
-	/// Cod adaugat pentru invatarea bibliotecii
-	void 	print_q_list(int num);
-	
-	///
-
-
 ///////////////////////////////////////////////////////////////////////////////
-	ntru(ZZ my_p, ZZ my_B, int my_N, int my_dm);
+	NtruMultikey(ZZ my_p, ZZ my_B, int my_N, int my_dm);
 
 	////////////////////////////////
 	void	ModulusFind(int num, int max_bit, int diff);
@@ -74,10 +76,10 @@ public:
 	void	compute_eval_onerelin(eval_key &ek2, ZZX tppk, ZZX tpek, int index);
 	ZZX		RelinRing(ZZX c, int index);
 ///////////////////////////////////////////////////////////////////////////////
-	void	ComputeKeysRingRelin_FFT(int num, int tblsize);
-	void	ConvertKeystoFFT(eval_key &ek2, FFTPolyList &fftkey, int &bitsize, int &num_add);
-	ZZX 	RelinRingFFT(ZZX &c, int index);
-	ZZX 	RelinRingFFT(ZZX &c, int index, int tableIndx);
+	void		ComputeKeysRingRelin_FFT(int num, int tblsize);
+	void		ConvertKeystoFFT(eval_key &ek2, FFTPolyList &fftkey, int &bitsize, int &num_add);
+	ZZX 		RelinRingFFT(ZZX &c, int index);
+	ZZX 		RelinRingFFT(ZZX &c, int index, int tableIndx);
 	void 	ReduceKeysLevel(int level);
 	void 	ReduceKeysLevel(int level, int tblIndex);
 	void	GetPolyBitsIndex(ZZX &bits, ZZX &cip, int &bitIndex);
@@ -100,10 +102,19 @@ public:
 	ZZX 	&ReturnPolyMod_M_1();
 ///////////////////////////////////////////////////////////////////////////////
 	ZZX 	CreateMessage(int size);
-
-
-
 	ZZX		FFTTestFunc(fftRep *R, int priNum);
+	
+	/************************* multikey stuff **************************************/
+	
+	/*
+	@brief calculeaza o functie descrisa de un polinom pe mai multe ctxt-uri 
+			apartinand mai multor parti 
+	@param poly_description reprezinta o descriere a functiei delegate si a partilor
+			implicate in computatie
+	*/
+	static HomEvalResult compute_function(PolyDescription poly_description);
+	
+	
 
 private:
 	int N, degree_m;
@@ -123,6 +134,9 @@ private:
 	int rand_seed, message_rand, max_bitsize, init_bitsize;
 
 	ZZ mySeed;
+	
+	/************************* multikey stuff **************************************/
+	
 };
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -136,7 +150,7 @@ vec_ZZ 	findFactors(ZZ f);
 int 	MobuisFunction(int n);
 ///////////////////////////////////////////////////////////////////////////////
 
-#endif /* NTRU_H_ */
+#endif /* NTRU_H_MULTIKEY */
 
 
 

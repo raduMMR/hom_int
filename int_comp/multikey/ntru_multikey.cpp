@@ -1,18 +1,8 @@
-#include "ntru.h"
+#include "ntru_multikey.h"
 #define PrintKeysOut
 #include <iostream>
 
-//////////// Cod care nu apartine bibliotecii oficiale
-void ntru::print_q_list(int num){
-	for(int i=0; i<num; i++){
-		std::cout<<q_list[i]<<std::endl;
-	}
-}
-
-
-////////////
-
-ntru::ntru(ZZ my_p, ZZ my_B, int my_N, int dm){
+NtruMultikey::NtruMultikey(ZZ my_p, ZZ my_B, int my_N, int dm){
 	mySeed = to_ZZ("5");
 	p = my_p;	B = my_B;
 	N = my_N;	degree_m = dm;
@@ -25,7 +15,7 @@ ntru::ntru(ZZ my_p, ZZ my_B, int my_N, int dm){
 	ZZ_p::init(p);
 }
 
-void ntru::ModulusFind(int num, int max_bit, int diff){
+void NtruMultikey::ModulusFind(int num, int max_bit, int diff){
 
 	ZZ 	t, co;
 	int bit_size = max_bit;
@@ -60,7 +50,7 @@ void ntru::ModulusFind(int num, int max_bit, int diff){
 }
 
 
-void ntru::ComputeKeys(int num){
+void NtruMultikey::ComputeKeys(int num){
 
 	pk = new ZZX[num];		sk  = new ZZX[num];
 	ek2 = new struct eval_key[num-1];
@@ -90,6 +80,7 @@ void ntru::ComputeKeys(int num){
 
 	g 	  = Sample();
 	coeff_reduction(g, g, q_list[0], N);
+	
 	pk[0] = MulMod(g, f_inv, modulus);
 
 	pk[0] = pk[0]*p;
@@ -134,14 +125,14 @@ void ntru::ComputeKeys(int num){
 		compute_eval(ek2[i-1], tppk, tpek, i-1);
 
 		#ifdef PrintKeysOut
-			cout << "Keys " << i << " Complete!" << endl;
+			cout << "Keys_3 " << i << " Complete!" << endl;
 		#endif
 	}
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////
 
-void ntru::ModulusFindRing(int num, int max_bit, int diff, ZZX modu){
+void NtruMultikey::ModulusFindRing(int num, int max_bit, int diff, ZZX modu){
 
 	ZZ 	t, co;
 	max_bitsize = max_bit;
@@ -159,7 +150,7 @@ void ntru::ModulusFindRing(int num, int max_bit, int diff, ZZX modu){
 
 }
 
-void ntru::ComputeKeysRingNoRelin(int num){
+void NtruMultikey::ComputeKeysRingNoRelin(int num){
 	pk = new ZZX[num];		sk  = new ZZX[num];
 
 	if(reducsetflag == false)
@@ -202,13 +193,13 @@ void ntru::ComputeKeysRingNoRelin(int num){
 		coeff_reduction(sk[i], sk[i], q_list[i], N);
 
 		#ifdef PrintKeys
-			cout << "Keys " << i << " Complete!" << endl;
+			cout << "Keys_4 " << i << " Complete!" << endl;
 		#endif
 	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////
-ZZX ntru::Encrypt(ZZX m, int i){
+ZZX NtruMultikey::Encrypt(ZZX m, int i){
 
 	ZZX s, e, result;
 	s = Sample();
@@ -224,7 +215,7 @@ ZZX ntru::Encrypt(ZZX m, int i){
 	return result;
 }
 
-ZZX ntru::Decrypt(ZZX c, int index){
+ZZX NtruMultikey::Decrypt(ZZX c, int index){
 
 	ZZ x;
 	ZZX result, t;
@@ -245,7 +236,7 @@ ZZX ntru::Decrypt(ZZX c, int index){
 	return result;
 }
 
-ZZX ntru::Sample(){
+ZZX NtruMultikey::Sample(){
 	SetSeed(mySeed);
 	ZZX result;
 	for(int i = 0; i < N;i ++)
@@ -258,7 +249,7 @@ ZZX ntru::Sample(){
 	return result;
 }
 
-ZZX ntru::Relin(ZZX c, int index){
+ZZX NtruMultikey::Relin(ZZX c, int index){
 	int bits[to_long(N)][max_bitsize];
 	ZZ t;
 	// std::cout<<"Pass0";
@@ -295,7 +286,7 @@ ZZX ntru::Relin(ZZX c, int index){
 	return result;
 }
 
-ZZX ntru::ModSwitch(ZZX &x, int index){
+ZZX NtruMultikey::ModSwitch(ZZX &x, int index){
 	ZZX res;
 	ZZ tp;
 	for(int i=0; i<N; i++){
@@ -311,13 +302,13 @@ ZZX ntru::ModSwitch(ZZX &x, int index){
 
 
 /////////////////////////////////////////////////////////////////////////////////////////
-void ntru::SetModulus(){
+void NtruMultikey::SetModulus(){
 	modulus = ComputeFastCycModulus(degree_m);
 	SetCoeff(modulus_m_1, 0, -to_ZZ("1"));
 	SetCoeff(modulus_m_1, degree_m, to_ZZ("1"));
 }
 
-ZZX ntru::ComputeFastCycModulus(int n){
+ZZX NtruMultikey::ComputeFastCycModulus(int n){
 	ZZX modulus;
 	int s;
 	modulus = 1;
@@ -353,14 +344,14 @@ ZZX ntru::ComputeFastCycModulus(int n){
 	return modulus;
 }
 
-void ntru::SetFastPolyModulus(){
+void NtruMultikey::SetFastPolyModulus(){
 	myr.SetModulus(modulus);
 	myr.Set_degree(N);
 	myr.ComputeTable();
 	reducsetflag = true;
 }
 
-void ntru::compute_eval(eval_key &ek2, ZZX tppk, ZZX tpek, int index){
+void NtruMultikey::compute_eval(eval_key &ek2, ZZX tppk, ZZX tpek, int index){
 
 	ZZX tpek2 = MulModZZX(tpek, tpek, index);
 	ZZX s, e, result, tp;
@@ -378,16 +369,16 @@ void ntru::compute_eval(eval_key &ek2, ZZX tppk, ZZX tpek, int index){
 	}
 }
 
-void ntru::PolyReduce(ZZX &out, ZZX &in){
+void NtruMultikey::PolyReduce(ZZX &out, ZZX &in){
 	myr.Reduce(out, in);
 }
 
-void ntru::CoeffReduce(ZZX &out, ZZX &in, int index){
+void NtruMultikey::CoeffReduce(ZZX &out, ZZX &in, int index){
 	int l = in.rep.length();
 	coeff_reduction(out, in, q_list[index], l);
 }
 
-void ntru::PolyCoeffReduce(ZZX &out, ZZX &in, int index){
+void NtruMultikey::PolyCoeffReduce(ZZX &out, ZZX &in, int index){
 	ZZX t;
 	t = in;
 	PolyReduce(t, t);
@@ -395,7 +386,7 @@ void ntru::PolyCoeffReduce(ZZX &out, ZZX &in, int index){
 	out = t;
 }
 
-ZZX ntru::MulModZZX(ZZX &a, ZZX &b, int index){
+ZZX NtruMultikey::MulModZZX(ZZX &a, ZZX &b, int index){
 	ZZX t;
 	t = a*b;
 	PolyReduce(t, t);
@@ -403,50 +394,50 @@ ZZX ntru::MulModZZX(ZZX &a, ZZX &b, int index){
 	return t;
 }
 
-ZZX ntru::AddModZZX(ZZX &a, ZZX &b, int index){
+ZZX NtruMultikey::AddModZZX(ZZX &a, ZZX &b, int index){
 	ZZX t = (a+b);
 	PolyReduce(t, t);
 	coeff_reduction(t, t, q_list[index], N);
 	return t;
 }
 
-ZZX &ntru::ReturnPolyMod(){
+ZZX &NtruMultikey::ReturnPolyMod(){
 	return modulus;
 }
 
-int &ntru::ReturnPolyModDegree(){
+int &NtruMultikey::ReturnPolyModDegree(){
 	return N;
 }
 
-ZZ &ntru::ReturnModQ(int index){
+ZZ &NtruMultikey::ReturnModQ(int index){
 	return q_list[index];
 }
 
 //////////////////////////////////////////////////////////////
 
-void ntru::PrintKeys(int index){
+void NtruMultikey::PrintKeys(int index){
 	for(int i=0; i<index; i++){
 		cout << "PK-" << i << "\t" << pk[i] << endl;
 		cout << "SK-" << i << "\t" << sk[i] << endl;
 	}
 }
 
-void ntru::PrintMods(int index){
+void NtruMultikey::PrintMods(int index){
 	for(int i=0; i<index; i++)
 			cout << "Mod-" << i << "\t" << q_list[i] << endl;
 }
 
-void ntru::IOReadModulus(){
+void NtruMultikey::IOReadModulus(){
 	// IOReadModulus_Special();
 	cin >> modulus;
 }
 
-void ntru::IOReadModulusExt(){
+void NtruMultikey::IOReadModulusExt(){
 	cin >> modulus_m_1;
 	// IOReadModulusExt_Special();
 }
 
-void ntru::IOReadModulus_Special(){
+void NtruMultikey::IOReadModulus_Special(){
 	
 	int vec[] = { 1, -1, 0, 1, -1, 0, 1, -1, 0, 1, -1, 0,
 			 1, -1, 0, 1, -1, 1, 0, -1, 1, 0, -1, 1, 0, -1, 1, 0, -1, 1, 0, -1, 1};
@@ -461,7 +452,7 @@ void ntru::IOReadModulus_Special(){
 	// cout << modulus << endl;
 }
 
-void ntru::IOReadModulusExt_Special(){
+void NtruMultikey::IOReadModulusExt_Special(){
 	
 	clear(modulus_m_1);
 	
@@ -484,7 +475,7 @@ void ntru::IOReadModulusExt_Special(){
 */
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
-void ntru::ComputeKeysRingRelin(int num){
+void NtruMultikey::ComputeKeysRingRelin(int num){
 	pk = new ZZX[num];		sk  = new ZZX[num];
 	ek2 = new struct eval_key[num];
 
@@ -540,12 +531,12 @@ void ntru::ComputeKeysRingRelin(int num){
 		coeff_reduction(sk[i], sk[i], q_list[i], N);
 
 		#ifdef PrintKeys
-			cout << "Keys " << i << " Complete!" << endl;
+			cout << "Keys_1 " << i << " Complete!" << endl;
 		#endif
 	}
 }
 
-void ntru::compute_eval_onerelin(eval_key &ek2, ZZX tppk, ZZX tpek, int index){
+void NtruMultikey::compute_eval_onerelin(eval_key &ek2, ZZX tppk, ZZX tpek, int index){
 
 	ZZX tpek2 = tpek;
 
@@ -564,7 +555,7 @@ void ntru::compute_eval_onerelin(eval_key &ek2, ZZX tppk, ZZX tpek, int index){
 	}
 }
 
-ZZX ntru::RelinRing(ZZX c, int index){
+ZZX NtruMultikey::RelinRing(ZZX c, int index){
 	ZZX bits;
 
 	ZZX tp;
@@ -593,7 +584,7 @@ ZZX ntru::RelinRing(ZZX c, int index){
 */
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
-void ntru::ComputeKeysRingRelin_FFT(int num, int tblsize){
+void NtruMultikey::ComputeKeysRingRelin_FFT(int num, int tblsize){
 	tableSize = tblsize;
 
 	pk = new ZZX[num];		sk  = new ZZX[num];		ek2 = new struct eval_key;
@@ -669,23 +660,23 @@ void ntru::ComputeKeysRingRelin_FFT(int num, int tblsize){
 	for(int i=1; i<tblsize; i++)
 		ReduceKeysLevel(i, i);
 
-#ifdef PrintKeys
+/*#ifndef PrintKeys
 	cout << "Keys 0 Complete!" << endl;
-#endif
+#endif*/
 
 //////////////////////////Rest Key///////////////////////////////////
 	for(int i=1; i<num; i++){
 		sk[i] = sk[i-1];
 		coeff_reduction(sk[i], sk[i], q_list[i], N);
 
-		#ifdef PrintKeys
-			cout << "Keys " << i << " Complete!" << endl;
-		#endif
+		/*#ifndef PrintKeys
+			cout << "Keys_2 " << i << " Complete!" << endl;
+		#endif*/
 	}
 
 }
 
-void ntru::ConvertKeystoFFT(eval_key &ek2, FFTPolyList &fftkey, int &bitsize, int &num_add){
+void NtruMultikey::ConvertKeystoFFT(eval_key &ek2, FFTPolyList &fftkey, int &bitsize, int &num_add){
 
 	long bound 		= GetPrimeBound(N, N, bitsize, 1, num_add);
 
@@ -710,7 +701,7 @@ void ntru::ConvertKeystoFFT(eval_key &ek2, FFTPolyList &fftkey, int &bitsize, in
 
 }
 
-ZZX	ntru::FFTTestFunc(fftRep *R, int priNum){
+ZZX	NtruMultikey::FFTTestFunc(fftRep *R, int priNum){
 	ZZX ffttest;
 	zz_pX *rescrt;
 	rescrt = new zz_pX[priNum];
@@ -725,7 +716,7 @@ ZZX	ntru::FFTTestFunc(fftRep *R, int priNum){
 	 return ffttest;
 }
 
-ZZX ntru::RelinRingFFT(ZZX &c, int index, int tableIndx){
+ZZX NtruMultikey::RelinRingFFT(ZZX &c, int index, int tableIndx){
 
 	zz_pBak bak;
 	bak.save();
@@ -775,15 +766,15 @@ ZZX ntru::RelinRingFFT(ZZX &c, int index, int tableIndx){
 	return res;
 }
 
-ZZX ntru::RelinRingFFT(ZZX &c, int index){
+ZZX NtruMultikey::RelinRingFFT(ZZX &c, int index){
 	return RelinRingFFT(c, index, 0);
 }
 
-void ntru::ReduceKeysLevel(int level){
+void NtruMultikey::ReduceKeysLevel(int level){
 	ReduceKeysLevel(level, 0);
 }
 
-void ntru::ReduceKeysLevel(int level, int tblIndex){
+void NtruMultikey::ReduceKeysLevel(int level, int tblIndex){
 
 	int leftBits = max_bitsize-level*Dif_Prime;
 
@@ -808,26 +799,26 @@ void ntru::ReduceKeysLevel(int level, int tblIndex){
 	ConvertKeystoFFT(ek2[0], fftKeys[tblIndex], leftBits, leftBits);
 }
 
-void ntru::GetPolyBitsIndex(ZZX &bits, ZZX &cip, int &bitIndex){
+void NtruMultikey::GetPolyBitsIndex(ZZX &bits, ZZX &cip, int &bitIndex){
 	for(int i=0; i<N; i++)
 		SetCoeff(bits, i, bit(coeff(cip,i),bitIndex));
 }
 
-void ntru::FFTmult(fftRep *res, fftRep *R1, fftRep *R2, int &priNum){
+void NtruMultikey::FFTmult(fftRep *res, fftRep *R1, fftRep *R2, int &priNum){
 	for(int i=0; i<priNum; i++){
 		zz_p::FFTInit(i);
 		mul(res[i], R1[i], R2[i]);
 	}
 }
 
-void ntru::FFTadd(fftRep *res, fftRep *R1, fftRep *R2, int &priNum){
+void NtruMultikey::FFTadd(fftRep *res, fftRep *R1, fftRep *R2, int &priNum){
 	for(int i=0; i<priNum; i++){
 		zz_p::FFTInit(i);
 		add(res[i], R1[i], R2[i]);
 	}
 }
 
-void ntru::FromCrt2Poly(ZZX &res, zz_pX *polys, int &priNum){
+void NtruMultikey::FromCrt2Poly(ZZX &res, zz_pX *polys, int &priNum){
 	 zz_pBak bak;
 	 bak.save();
 
@@ -886,7 +877,7 @@ void ntru::FromCrt2Poly(ZZX &res, zz_pX *polys, int &priNum){
 */
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
-ZZX ntru::ModSwitchX_M_1(ZZX &x, int index){
+ZZX NtruMultikey::ModSwitchX_M_1(ZZX &x, int index){
 	ZZX res;
 	ZZ tp;
 	for(int i=0; i<degree_m; i++){
@@ -900,7 +891,7 @@ ZZX ntru::ModSwitchX_M_1(ZZX &x, int index){
 	return res;
 }
 
-ZZX	ntru::PolyModX_N_1(ZZX &in){
+ZZX	NtruMultikey::PolyModX_N_1(ZZX &in){
 	ZZX res;
 	for(int i=0; i<degree_m; i++){
 		SetCoeff(res, i, coeff(in, i) - coeff(in, i+degree_m));
@@ -908,7 +899,7 @@ ZZX	ntru::PolyModX_N_1(ZZX &in){
 	return res;
 }
 
-void ntru::compute_eval_XN1(eval_key &ek2, ZZX tppk, ZZX tpek, int index){
+void NtruMultikey::compute_eval_XN1(eval_key &ek2, ZZX tppk, ZZX tpek, int index){
 
 	ZZX tpek2 = tpek*tpek;
 	tpek2 = PolyModX_N_1(tpek2);
@@ -931,7 +922,7 @@ void ntru::compute_eval_XN1(eval_key &ek2, ZZX tppk, ZZX tpek, int index){
 	}
 }
 
-ZZX ntru::Encrypt_XN1(ZZX m, int i){
+ZZX NtruMultikey::Encrypt_XN1(ZZX m, int i){
 
 	ZZX s, e, result;
 	s = Sample();
@@ -948,7 +939,7 @@ ZZX ntru::Encrypt_XN1(ZZX m, int i){
 	return result;
 }
 
-ZZX ntru::MulModZZX_XN1(ZZX &a, ZZX &b, int index){
+ZZX NtruMultikey::MulModZZX_XN1(ZZX &a, ZZX &b, int index){
 	// ZZX t = a*b;//
 	ZZX t = MulMod(a, b, modulus);	
 	t = PolyModX_N_1(t);
@@ -956,7 +947,7 @@ ZZX ntru::MulModZZX_XN1(ZZX &a, ZZX &b, int index){
 	return t;
 }
 
-ZZX ntru::Relin_XN1(ZZX c, int index){
+ZZX NtruMultikey::Relin_XN1(ZZX c, int index){
 	int bits[to_long(degree_m)][max_bitsize];
 	ZZ t;
 	for(int i=0; i<degree_m; i++){
@@ -991,7 +982,7 @@ ZZX ntru::Relin_XN1(ZZX c, int index){
 }
 
 
-ZZX ntru::ModSwitch_XN1(ZZX &x, int index){
+ZZX NtruMultikey::ModSwitch_XN1(ZZX &x, int index){
 
 	ZZ tp;
 	for(int i=0; i<degree_m; i++){
@@ -1006,7 +997,7 @@ ZZX ntru::ModSwitch_XN1(ZZX &x, int index){
 }
 
 
-ZZX ntru::Decrypt_XN1(ZZX c, int index){
+ZZX NtruMultikey::Decrypt_XN1(ZZX c, int index){
 
 	ZZ x;
 	ZZX result;
@@ -1029,7 +1020,7 @@ ZZX ntru::Decrypt_XN1(ZZX c, int index){
 	return result;
 }
 
-ZZX	ntru::PolyModX_Np1(ZZX &in){
+ZZX	NtruMultikey::PolyModX_Np1(ZZX &in){
 	ZZX res;
 	for(int i=0; i<degree_m; i++){
 		SetCoeff(res, i, coeff(in, i) + coeff(in, i+degree_m));
@@ -1037,7 +1028,7 @@ ZZX	ntru::PolyModX_Np1(ZZX &in){
 	return res;
 }
 
-ZZX	ntru::MulModPolyX_M_1(ZZX &a, ZZX &b, int index){
+ZZX	NtruMultikey::MulModPolyX_M_1(ZZX &a, ZZX &b, int index){
 	ZZX t;
 	mul(t, a, b);
 	t = PolyModX_Np1(t);
@@ -1045,12 +1036,12 @@ ZZX	ntru::MulModPolyX_M_1(ZZX &a, ZZX &b, int index){
 	return t;
 }
 
-ZZX &ntru::ReturnPolyMod_M_1(){
+ZZX &NtruMultikey::ReturnPolyMod_M_1(){
 	return modulus_m_1;
 }
 
 
-ZZX ntru::CreateMessage(int size){
+ZZX NtruMultikey::CreateMessage(int size){
 	ZZX x;
 	ZZ r = to_ZZ(time(NULL));
 	message_rand++;
